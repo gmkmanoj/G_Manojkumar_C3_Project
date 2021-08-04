@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RestaurantTest {
     Restaurant restaurant;
-
+    boolean restaurantOpen;
     @BeforeEach
     public void initRestaurant(){
         LocalTime openingTime = LocalTime.parse("10:30:00");
@@ -25,12 +25,21 @@ class RestaurantTest {
     //-------FOR THE 2 TESTS BELOW, YOU MAY USE THE CONCEPT OF MOCKING, IF YOU RUN INTO ANY TROUBLE
     @Test
     public void is_restaurant_open_should_return_true_if_time_is_between_opening_and_closing_time(){
-        assertEquals(true,restaurant.isRestaurantOpen());
+        Restaurant spyRestaurant =  Mockito.spy(restaurant);
+        LocalTime duringWorkingHours = LocalTime.parse("22:01:00");
+        Mockito.when(spyRestaurant.getCurrentTime()).thenReturn(duringWorkingHours);
+        restaurantOpen=spyRestaurant.isRestaurantOpen();
+        assertTrue(restaurantOpen);
     }
 
     @Test
     public void is_restaurant_open_should_return_false_if_time_is_outside_opening_and_closing_time(){
-        assertEquals(false, restaurant.isRestaurantOpen());
+        Restaurant spyRestaurant = Mockito.spy(restaurant);
+        LocalTime afterClosingTime = LocalTime.parse("23:01:00");
+        Mockito.when(spyRestaurant.getCurrentTime()).thenReturn(afterClosingTime);
+        restaurantOpen=spyRestaurant.isRestaurantOpen();
+        assertFalse(restaurantOpen);
+
     }
 
     //<<<<<<<<<<<<<<<<<<<<<<<<<OPEN/CLOSED>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -61,7 +70,8 @@ class RestaurantTest {
         List<String> itemList = new ArrayList<String>();
         itemList.add("Sweet corn soup");
         itemList.add("Vegetable lasagne");
-        assertTrue(restaurant.getOrderTotal(itemList) > 0);
+        int expectedTotalValue = 388;
+        assertTrue(restaurant.getOrderTotal(itemList) == expectedTotalValue);
     }
     //<<<<<<<<<<<<<<<<<<<<<<<ORDER COST>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
