@@ -67,4 +67,7 @@ public class Restaurant {
         return name;
     }
 
+    public int getOrderTotal(List<String> items){
+        return 0;
+    }
 }
